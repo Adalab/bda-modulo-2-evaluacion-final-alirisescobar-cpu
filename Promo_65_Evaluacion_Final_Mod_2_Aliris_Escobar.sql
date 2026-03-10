@@ -280,4 +280,26 @@ SELECT a.first_name, a.last_name, c.name -- Hare un innerjoin para toda la ruta 
     
     -- 25.Encuentra todos los actores que han actuado juntos en al menos una película. La consulta debe mostrar el nombre y apellido de los actores y el número de películas en las que han actuado juntos.	
 
+-- primero la ruta
+SELECT a.first_name, a.last_name, COUNT(f.film_id)
+    FROM actor AS a
+    INNER JOIN film_actor as fa
+		ON a.actor_id = fa.actor_id
+    INNER JOIN film as f
+		ON fa.film_id =f.film_id;
+ -- Ahora un self join
+ 
+ SELECT a1.first_name, a1.last_name, -- Datos Actor 1
+	a2.first_name, a2.last_name, 		-- Datos Actor 2
+	COUNT(f1.film_id) AS Total_Pelis 
+    FROM film_actor AS f1
+    INNER JOIN film_actor AS f2
+   		ON f1.film_id = f2.film_id
+        AND f1.actor_id < f2.actor_id -- Evitamos duplicados y que un actor salga consigo mismo
+	INNER JOIN actor AS a1 
+		ON f1.actor_id = a1.actor_id
+	INNER JOIN actor AS a2
+        ON f2.actor_id = a2.actor_id
+-- Agrupamos por los dos para identificar a la pareja única
+	GROUP BY a1.actor_id, a2.actor_id;
 
